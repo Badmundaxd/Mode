@@ -15,7 +15,7 @@ from time import time
 import asyncio
 from BADCLONE.utils.extraction import extract_user
 from BADCLONE.utils.database.clonedb import get_owner_id_from_db, get_cloned_support_chat, get_cloned_support_channel
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
+from BADCLONE.utils.rich_ui import rich_edit, rich_reply, rich_send, rich_img
 
 # Define a dictionary to track the last message timestamp for each user
 user_last_message_time = {}
@@ -62,9 +62,9 @@ async def helper_private(
         language = await get_lang(update.chat.id)
         _ = get_string(language)
         keyboard = first_page(_)
-        await update.reply_photo(
-            photo=START_IMG_URL,
-            caption=_["help_1"].format(C_SUPPORT_CHAT),
+        await rich_send(
+            client, update.chat.id,
+            rich_img(START_IMG_URL) + f"<p>{_['help_1'].format(C_SUPPORT_CHAT)}</p>",
             reply_markup=keyboard,
         )
 
@@ -84,7 +84,7 @@ async def help_com_group(client, message: Message, _):
         if user_command_count[user_id] > SPAM_THRESHOLD:
             # Block the user if they exceed the threshold
             hu = await rich_reply(message, 
-                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
+                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴ'ᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
             )
             await asyncio.sleep(3)
             await hu.delete()
