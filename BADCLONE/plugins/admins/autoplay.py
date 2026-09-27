@@ -18,7 +18,6 @@ from BADCLONE.utils.stream.autoplay import (
     user_can_control,
 )
 from config import BANNED_USERS
-from BADCLONE.utils.rich_ui import rich_reply
 
 USAGE = (
     "<b>♬ ᴀᴜᴛᴏᴘʟᴀʏ</b>\n\n"
@@ -55,19 +54,19 @@ async def autoplay_command(client, message: Message, _):
 
     # /autoplay  -> just show the current settings
     if not args:
-        return await rich_reply(message, 
+        return await message.reply_text(
             await _status(chat_id) + usage, reply_markup=close_markup(_)
         )
 
     if not await user_can_control(message.from_user.id, chat_id):
-        return await rich_reply(message, _["admin_14"], reply_markup=close_markup(_))
+        return await message.reply_text(_["admin_14"], reply_markup=close_markup(_))
 
     action = args[0]
     who = message.from_user.mention
 
     if action in ("on", "enable", "start"):
         await set_autoplay(chat_id, True)
-        return await rich_reply(message, 
+        return await message.reply_text(
             f"<b>♬ ᴀᴜᴛᴏᴘʟᴀʏ ᴇɴᴀʙʟᴇᴅ ʙʏ</b> {who}\n"
             "ᴡʜᴇɴ ᴛʜᴇ ǫᴜᴇᴜᴇ ᴇɴᴅs, ʀᴇʟᴀᴛᴇᴅ sᴏɴɢs ᴡɪʟʟ ᴋᴇᴇᴘ ᴘʟᴀʏɪɴɢ.",
             reply_markup=close_markup(_),
@@ -75,27 +74,27 @@ async def autoplay_command(client, message: Message, _):
 
     if action in ("off", "disable", "stop"):
         await set_autoplay(chat_id, False)
-        return await rich_reply(message, 
+        return await message.reply_text(
             f"<b>♬ ᴀᴜᴛᴏᴘʟᴀʏ ᴅɪsᴀʙʟᴇᴅ ʙʏ</b> {who}",
             reply_markup=close_markup(_),
         )
 
     if action in ("lang", "language") and len(args) >= 2:
         if args[1] not in AUTOPLAY_LANGS:
-            return await rich_reply(message, usage, reply_markup=close_markup(_))
+            return await message.reply_text(usage, reply_markup=close_markup(_))
         await set_autoplay_lang(chat_id, args[1])
-        return await rich_reply(message, 
+        return await message.reply_text(
             f"<b>♬ ᴀᴜᴛᴏᴘʟᴀʏ ʟᴀɴɢᴜᴀɢᴇ :</b> <code>{args[1]}</code>",
             reply_markup=close_markup(_),
         )
 
     if action == "mood" and len(args) >= 2:
         if args[1] not in AUTOPLAY_MOODS:
-            return await rich_reply(message, usage, reply_markup=close_markup(_))
+            return await message.reply_text(usage, reply_markup=close_markup(_))
         await set_autoplay_mood(chat_id, args[1])
-        return await rich_reply(message, 
+        return await message.reply_text(
             f"<b>♬ ᴀᴜᴛᴏᴘʟᴀʏ ᴍᴏᴏᴅ :</b> <code>{args[1]}</code>",
             reply_markup=close_markup(_),
         )
 
-    return await rich_reply(message, usage, reply_markup=close_markup(_))
+    return await message.reply_text(usage, reply_markup=close_markup(_))

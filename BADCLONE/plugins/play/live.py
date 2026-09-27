@@ -5,7 +5,6 @@ from BADCLONE.utils.channelplay import get_channeplayCB
 from BADCLONE.utils.decorators.language import languageCB
 from BADCLONE.utils.stream.stream import stream
 from config import BANNED_USERS
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 
 @app.on_callback_query(filters.regex("LiveStream") & ~BANNED_USERS)
@@ -30,13 +29,13 @@ async def play_live_stream(client, CallbackQuery, _):
         await CallbackQuery.answer()
     except:
         pass
-    mystic = await rich_reply(CallbackQuery.message, 
+    mystic = await CallbackQuery.message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
     try:
         details, track_id = await YouTube.track(vidid, True)
     except:
-        return await rich_edit(mystic, _["play_3"])
+        return await mystic.edit_text(_["play_3"])
     ffplay = True if fplay == "f" else None
     if not details["duration_min"]:
         try:
@@ -55,7 +54,7 @@ async def play_live_stream(client, CallbackQuery, _):
         except Exception as e:
             ex_type = type(e).__name__
             err = e if ex_type == "AssistantErr" else _["general_2"].format(ex_type)
-            return await rich_edit(mystic, err)
+            return await mystic.edit_text(err)
     else:
-        return await rich_edit(mystic, "» ɴᴏᴛ ᴀ ʟɪᴠᴇ sᴛʀᴇᴀᴍ.")
+        return await mystic.edit_text("» ɴᴏᴛ ᴀ ʟɪᴠᴇ sᴛʀᴇᴀᴍ.")
     await mystic.delete()

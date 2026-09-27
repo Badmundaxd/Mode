@@ -17,7 +17,6 @@ from pyrogram.errors import (
 )
 
 from BADCLONE.plugins.tools.clone import CLONES
-from BADCLONE.utils.rich_ui import rich_send
 
 TEMP_CLONES = set()
 
@@ -80,7 +79,7 @@ async def check_clones(client, member: ChatMemberUpdated):
 
                 if len(matching_ids) > 1:  # More than one bot from CLONES in the group
                     await asyncio.sleep(1)
-                    await rich_send(client, chat_id, f"Lᴏᴏᴋs ʟɪᴋᴇ ᴏɴᴇ ᴏғ ᴍʏ ᴛᴇᴀᴍᴍᴀᴛᴇs ɪs ᴀʟʀᴇᴀᴅʏ ʜᴇʀᴇ! Oɴʟʏ ᴏɴᴇ ᴏғ ᴜs ᴄᴀɴ sᴛᴀʏ. I’ʟʟ ᴛᴀᴋᴇ ᴍʏ ʟᴇᴀᴠᴇ ɴᴏᴡ. ! ✨")
+                    await client.send_message(chat_id, f"Lᴏᴏᴋs ʟɪᴋᴇ ᴏɴᴇ ᴏғ ᴍʏ ᴛᴇᴀᴍᴍᴀᴛᴇs ɪs ᴀʟʀᴇᴀᴅʏ ʜᴇʀᴇ! Oɴʟʏ ᴏɴᴇ ᴏғ ᴜs ᴄᴀɴ sᴛᴀʏ. I’ʟʟ ᴛᴀᴋᴇ ᴍʏ ʟᴇᴀᴠᴇ ɴᴏᴡ. ! ✨")
                     await client.leave_chat(chat_id)
                     return
 

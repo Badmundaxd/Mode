@@ -9,7 +9,6 @@ from config import BANNED_USERS
 from strings import get_string, languages_present
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def random_style():
@@ -48,7 +47,7 @@ def lanuages_keyboard(_):
 @language
 async def langs_command(client, message: Message, _):
     keyboard = lanuages_keyboard(_)
-    await rich_reply(message, 
+    await message.reply_text(
         _["lang_1"],
         reply_markup=keyboard,
     )

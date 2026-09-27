@@ -5,7 +5,6 @@ from pyrogram.errors import ChatAdminRequired, UserNotParticipant, ChatWriteForb
 from BADCLONE import app
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def random_style():
@@ -37,7 +36,7 @@ async def must_join_channel(app: Client, msg: Message):
                 chat_info = await app.get_chat(MUST_JOIN)
                 link = chat_info.invite_link
             try:
-                await rich_reply(msg, 
+                await msg.reply_text(
                     text=(
                     f"[๏]({IMG}) ᴀᴄᴄᴏʀᴅɪɴɢ ᴛᴏ ᴍʏ ᴅᴀᴛᴀʙᴀsᴇ ʏᴏᴜ'ᴠᴇ ɴᴏᴛ ᴊᴏɪɴᴇᴅ [๏sᴜᴘᴘᴏʀᴛ๏]({link}) ʏᴇᴛ, ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴜsᴇ ᴍᴇ ᴛʜᴇɴ ᴊᴏɪɴ [๏sᴜᴘᴘᴏʀᴛ๏]({link}) ᴀɴᴅ sᴛᴀʀᴛ ᴍᴇ ᴀɢᴀɪɴ ! "
                     ),

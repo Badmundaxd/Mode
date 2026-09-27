@@ -2,14 +2,13 @@ from BADCLONE.misc import SUDOERS
 from BADCLONE.utils.database import get_lang, is_maintenance
 from strings import get_string
 from config import SUPPORT_CHAT
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def language(mystic):
     async def wrapper(_, message, **kwargs):
         if await is_maintenance() is False:
             if message.from_user.id not in SUDOERS:
-                return await rich_reply(message, 
+                return await message.reply_text(
                     text=f"{app.mention} ɪs ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ, ᴠɪsɪᴛ <a href={SUPPORT_CHAT}>sᴜᴘᴘᴏʀᴛ ᴄʜᴀᴛ</a> ғᴏʀ ᴋɴᴏᴡɪɴɢ ᴛʜᴇ ʀᴇᴀsᴏɴ.",
                     disable_web_page_preview=True,
                 )

@@ -11,7 +11,6 @@ from BADCLONE.utils import get_readable_time
 from BADCLONE.utils.database.clonedb import get_owner_id_from_db, get_cloned_support_chat, get_cloned_support_channel
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_edit, rich_send, rich_img
 
 
 def random_style():
@@ -35,9 +34,8 @@ async def ping_clone(client: Client, message: Message):
     C_BOT_SUPPORT_CHANNEL = await get_cloned_support_channel(bot.id)
     C_SUPPORT_CHANNEL = f"https://t.me/{C_BOT_SUPPORT_CHANNEL}"
 
-    hmm = await rich_send(
-        client, message.chat.id,
-        f"❍ {bot.mention} ɪs ᴘɪɴɢɪɴɢ...",
+    hmm = await message.reply_photo(
+        photo=PING_IMG_URL, caption=f"{bot.mention} ɪs ᴘɪɴɢɪɴɢ..."
     )
     upt = int(time.time() - StartTime)
     cpu = psutil.cpu_percent(interval=0.5)
@@ -47,22 +45,21 @@ async def ping_clone(client: Client, message: Message):
     resp = (datetime.now() - start).microseconds / 1000
     uptime = get_readable_time((upt))
 
-    await rich_edit(hmm, 
-        f"""➻ ᴘᴏɴɢ : `{resp}ᴍs`
+    await hmm.edit_text(
+        f"""➻ ᴩᴏɴɢ : `{resp}ᴍs`
 
-{rich_img(PING_IMG_URL)}
 <b><u>{bot.mention} sʏsᴛᴇᴍ sᴛᴀᴛs :</u></b>
 
-๏ **ᴜᴘᴛɪᴍᴇ :** {uptime}
+๏ **ᴜᴩᴛɪᴍᴇ :** {uptime}
 ๏ **ʀᴀᴍ :** {mem}
-๏ **ᴄᴘᴜ :** {cpu}
+๏ **ᴄᴩᴜ :** {cpu}
 ๏ **ᴅɪsᴋ :** {disk}""",
         reply_markup=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton("❄ sᴜᴘᴘᴏʀᴛ ❄", url=C_SUPPORT_CHAT, style=random_style()),
                     InlineKeyboardButton(
-                        "✨ ᴀᴅᴅ ᴍᴇ ✨",
+                        "✨ 𝙰𝙳𝙳 𝙼𝙴✨",
                         url=f"https://t.me/{bot.username}?startgroup=true",
                      style=random_style()),
                 ],

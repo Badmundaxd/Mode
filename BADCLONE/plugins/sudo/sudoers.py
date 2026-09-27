@@ -12,7 +12,6 @@ from BADCLONE.utils.inline import close_markup
 from config import BANNED_USERS, OWNER_ID
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def random_style():
@@ -30,16 +29,16 @@ def random_style():
 async def useradd(client, message: Message, _):
     if not message.reply_to_message:
         if len(message.command) != 2:
-            return await rich_reply(message, _["general_1"])
+            return await message.reply_text(_["general_1"])
     user = await extract_user(message)
     if user.id in SUDOERS:
-        return await rich_reply(message, _["sudo_1"].format(user.mention))
+        return await message.reply_text(_["sudo_1"].format(user.mention))
     added = await add_sudo(user.id)
     if added:
         SUDOERS.add(user.id)
-        await rich_reply(message, _["sudo_2"].format(user.mention))
+        await message.reply_text(_["sudo_2"].format(user.mention))
     else:
-        await rich_reply(message, _["sudo_8"])
+        await message.reply_text(_["sudo_8"])
 
 
 @app.on_message(filters.command(["delsudo", "rmsudo"], prefixes=["/", "!", "%", ",", "", ".", "@", "#"]) & filters.user(OWNER_ID))
@@ -47,16 +46,16 @@ async def useradd(client, message: Message, _):
 async def userdel(client, message: Message, _):
     if not message.reply_to_message:
         if len(message.command) != 2:
-            return await rich_reply(message, _["general_1"])
+            return await message.reply_text(_["general_1"])
     user = await extract_user(message)
     if user.id not in SUDOERS:
-        return await rich_reply(message, _["sudo_3"].format(user.mention))
+        return await message.reply_text(_["sudo_3"].format(user.mention))
     removed = await remove_sudo(user.id)
     if removed:
         SUDOERS.remove(user.id)
-        await rich_reply(message, _["sudo_4"].format(user.mention))
+        await message.reply_text(_["sudo_4"].format(user.mention))
     else:
-        await rich_reply(message, _["sudo_8"])
+        await message.reply_text(_["sudo_8"])
 
 
 
@@ -65,8 +64,7 @@ async def sudoers_list(client, message: Message):
     keyboard = [[InlineKeyboardButton("❍ ᴠɪᴇᴡ sᴜᴅᴏʟɪsᴛ ❍", callback_data="check_sudo_list", style=random_style())]]
     reply_markups = InlineKeyboardMarkup(keyboard)
   
-    await message.reply_photo(photo="https://files.catbox.moe/ldchnq.jpg", caption="**» ᴄʜᴇᴄᴋ sᴜᴅᴏ ʟɪsᴛ ʙʏ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ.**\n\n**» ɴᴏᴛᴇ:**  ᴏɴʟʏ sᴜᴅᴏ ᴜsᴇʀs ᴄᴀɴ ᴠɪᴇᴡ. ", reply_markup=reply_markups)
-    # await message.reply_video(video="https://telegra.ph/file/53391fc8ce8ce40cda97f.mp4", caption="**❍ ᴄʜᴇᴄᴋ sᴜᴅᴏ ʟɪsᴛ ʙʏ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ●**\n\n**❍ ɴᴏᴛᴇ:**  ᴏɴʟʏ sᴜᴅᴏ ᴜsᴇʀs ᴄᴀɴ ᴠɪᴇᴡ ● ", reply_markup=reply_markups)
+    await message.reply_photo(photo="https://graph.org/file/2e3cf4327b169b981055e.jpg", caption="**» ᴄʜᴇᴄᴋ sᴜᴅᴏ ʟɪsᴛ ʙʏ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ.**\n\n**» ɴᴏᴛᴇ:**  ᴏɴʟʏ sᴜᴅᴏ ᴜsᴇʀs ᴄᴀɴ ᴠɪᴇᴡ. ", reply_markup=reply_markups)
     
 
 @app.on_callback_query(filters.regex("^check_sudo_list$"))
@@ -122,4 +120,4 @@ async def del_all_sudo(client, message: Message, _):
             if removed:
                 SUDOERS.remove(user_id)
                 count -= 1
-    await rich_reply(message, f"Removed {count} users from the sudo list.")
+    await message.reply_text(f"Removed {count} users from the sudo list.")

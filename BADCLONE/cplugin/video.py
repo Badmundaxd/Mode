@@ -9,7 +9,6 @@ from youtubesearchpython import SearchVideos
 from yt_dlp import YoutubeDL
 from time import time
 from BADCLONE.utils.extraction import extract_user
-from BADCLONE.utils.rich_ui import rich_reply, rich_send
 
 # Define a dictionary to track the last message timestamp for each user
 user_last_message_time = {}
@@ -32,8 +31,8 @@ async def download_shorts(client: Client, message: Message):
         user_command_count[user_id] = user_command_count.get(user_id, 0) + 1
         if user_command_count[user_id] > SPAM_THRESHOLD:
             # Block the user if they exceed the threshold
-            hu = await rich_reply(message, 
-                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴ'ᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
+            hu = await message.reply_text(
+                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
             )
             await asyncio.sleep(3)
             await hu.delete()
@@ -45,7 +44,7 @@ async def download_shorts(client: Client, message: Message):
 
     url = get_text(message)
     if not url:
-        await rich_reply(message, "» ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴠᴀʟɪᴅ ᴜʀʟ.")
+        await message.reply("Please provide a valid URL.")
         return
 
     await message.delete()
@@ -53,7 +52,7 @@ async def download_shorts(client: Client, message: Message):
     user_name = message.from_user.first_name
     chutiya = "[" + user_name + "](tg://user?id=" + str(user_id) + ")"
 
-    pablo = await rich_send(client, message.chat.id, "Downloading, please wait...")
+    pablo = await client.send_message(message.chat.id, "Downloading, please wait...")
 
     try:
         opts = {
@@ -128,8 +127,8 @@ async def ytmusic(client: Client, message: Message):
         user_command_count[user_id] = user_command_count.get(user_id, 0) + 1
         if user_command_count[user_id] > SPAM_THRESHOLD:
             # Block the user if they exceed the threshold
-            hu = await rich_reply(message, 
-                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴ'ᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
+            hu = await message.reply_text(
+                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
             )
             await asyncio.sleep(3)
             await hu.delete()
@@ -145,10 +144,10 @@ async def ytmusic(client: Client, message: Message):
     user_name = message.from_user.first_name
     chutiya = "[" + user_name + "](tg://user?id=" + str(user_id) + ")"
 
-    pablo = await rich_send(client, message.chat.id, f"sᴇᴀʀᴄʜɪɴɢ, ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...")
+    pablo = await client.send_message(message.chat.id, f"sᴇᴀʀᴄʜɪɴɢ, ᴩʟᴇᴀsᴇ ᴡᴀɪᴛ...")
     if not urlissed:
         await pablo.edit(
-            "😴 sᴏɴɢ ɴᴏᴛ ғᴏᴜɴᴅ ᴏɴ ʏᴏᴜᴛᴜʙᴇ.\n\n» ᴍᴀʏʙᴇ ᴛᴜɴᴇ ɢᴀʟᴛɪ ʟɪᴋʜᴀ ʜᴏ, ᴘᴀᴅʜᴀɪ - ʟɪᴋʜᴀɪ ᴛᴏʜ ᴋᴀʀᴛᴀ ɴᴀʜɪ ᴛᴜ !"
+            "😴 sᴏɴɢ ɴᴏᴛ ғᴏᴜɴᴅ ᴏɴ ʏᴏᴜᴛᴜʙᴇ.\n\n» ᴍᴀʏʙᴇ ᴛᴜɴᴇ ɢᴀʟᴛɪ ʟɪᴋʜᴀ ʜᴏ, ᴩᴀᴅʜᴀɪ - ʟɪᴋʜᴀɪ ᴛᴏʜ ᴋᴀʀᴛᴀ ɴᴀʜɪ ᴛᴜ !"
         )
         return
 
@@ -198,7 +197,7 @@ async def ytmusic(client: Client, message: Message):
         progress_args=(
             pablo,
             c_time,
-            f"» ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ...\n\nᴜᴘʟᴏᴀᴅɪɴɢ `{urlissed}` ғʀᴏᴍ ʏᴏᴜᴛᴜʙᴇ sᴇʀᴠᴇʀs...💫",
+            f"» ᴩʟᴇᴀsᴇ ᴡᴀɪᴛ...\n\nᴜᴩʟᴏᴀᴅɪɴɢ `{urlissed}` ғʀᴏᴍ ʏᴏᴜᴛᴜʙᴇ sᴇʀᴠᴇʀs...💫",
             file_stark,
         ),
     )

@@ -21,7 +21,6 @@ from BADCLONE import userbot
 from BADCLONE.core.mongo import mongodb, pymongodb
 from BADCLONE.utils.database.clonedb import get_owner_id_from_db, check_bot_premium
 from config import SUPPORT_CHAT, OWNER_ID
-from BADCLONE.utils.rich_ui import rich_reply, rich_send
 
 authdb = mongodb.adminauth
 authuserdb = mongodb.authuser
@@ -155,7 +154,7 @@ async def broadcast_message(client, message, _):
     OWNERS = [OWNER_ID, C_OWNER]
 
     if message.from_user.id not in OWNERS:
-        return await rich_reply(message, _["c_brod_1"].format(SUPPORT_CHAT))
+        return await message.reply_text(_["c_brod_1"].format(SUPPORT_CHAT))
 
     global IS_BROADCASTING
 
@@ -163,10 +162,10 @@ async def broadcast_message(client, message, _):
     a = await client.get_me()
     premium_status = await check_bot_premium(a.id)
     if premium_status is None:
-        return await rich_reply(message, "Bot ID not found!")
+        return await message.reply_text("Bot ID not found!")
     elif not premium_status:
         if message.from_user.id != OWNER_ID:
-            return await rich_reply(message, "Premium not found!")
+            return await message.reply_text("Premium not found!")
         else:
             pass
 
@@ -177,7 +176,7 @@ async def broadcast_message(client, message, _):
     else:
         if len(message.command) < 2:
             IS_BROADCASTING = False
-            return await rich_reply(message, _["broad_2"])
+            return await message.reply_text(_["broad_2"])
         query = message.text.split(None, 1)[1]
         if "-pin" in query:
             query = query.replace("-pin", "")
@@ -189,11 +188,11 @@ async def broadcast_message(client, message, _):
             query = query.replace("-user", "")
         if query == "":
             IS_BROADCASTING = False
-            return await rich_reply(message, _["broad_8"])
+            return await message.reply_text(_["broad_8"])
         
     # Start broadcasting
     IS_BROADCASTING = True
-    await rich_reply(message, _["broad_1"])
+    await message.reply_text(_["broad_1"])
 
     # Broadcast to chats
     if "-nobot" not in message.text:
@@ -205,7 +204,7 @@ async def broadcast_message(client, message, _):
                 m = (
                     await client.forward_messages(chat_id, y, x)
                     if message.reply_to_message
-                    else await rich_send(client, chat_id, html_text=query)
+                    else await client.send_message(chat_id, text=query)
                 )
                 if "-pin" in message.text:
                     try:
@@ -230,7 +229,7 @@ async def broadcast_message(client, message, _):
                 continue
 
         try:
-            await rich_reply(message, _["broad_3"].format(sent, pin))
+            await message.reply_text(_["broad_3"].format(sent, pin))
         except:
             pass
 
@@ -244,7 +243,7 @@ async def broadcast_message(client, message, _):
                 m = (
                     await client.forward_messages(user_id, y, x)
                     if message.reply_to_message
-                    else await rich_send(client, user_id, html_text=query)
+                    else await client.send_message(user_id, text=query)
                 )
                 susr += 1
                 await asyncio.sleep(0.2)
@@ -257,7 +256,7 @@ async def broadcast_message(client, message, _):
                 pass
 
         try:
-            await rich_reply(message, _["broad_4"].format(susr))
+            await message.reply_text(_["broad_4"].format(susr))
         except:
             pass
 

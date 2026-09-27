@@ -11,7 +11,6 @@ from BADCLONE import userbot
 from BADCLONE.core.mongo import mongodb, pymongodb
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def random_style():
@@ -91,7 +90,7 @@ async def music_off(chat_id: int):
 @AdminRightsCheck
 async def resume_com(cli, message: Message, _, chat_id):
     if await is_music_playing(chat_id):
-        return await rich_reply(message, _["admin_3"])
+        return await message.reply_text(_["admin_3"])
     await music_on(chat_id)
     await Bad.resume_stream(chat_id)
     buttons_resume = [
@@ -106,7 +105,7 @@ async def resume_com(cli, message: Message, _, chat_id):
              style=random_style()),
         ],
     ]
-    await rich_reply(message, 
+    await message.reply_text(
         _["admin_4"].format(message.from_user.mention),
         reply_markup=InlineKeyboardMarkup(buttons_resume),
     )

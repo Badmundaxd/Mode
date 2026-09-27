@@ -9,7 +9,6 @@ from BADCLONE.utils import bot_sys_stats
 from BADCLONE.utils.decorators.language import language
 from BADCLONE.utils.inline import supp_markup
 from config import BANNED_USERS
-from BADCLONE.utils.rich_ui import rich_edit
 
 
 @app.on_message(filters.command("ping", prefixes=["/", "!", "%", ",", "", ".", "@", "#"]) & ~BANNED_USERS)
@@ -23,7 +22,7 @@ async def ping_com(client, message: Message, _):
     pytgping = await Bad.ping()
     UP, CPU, RAM, DISK = await bot_sys_stats()
     resp = (datetime.now() - start).microseconds / 1000
-    await rich_edit(response, 
+    await response.edit_text(
         _["ping_2"].format(resp, app.mention, UP, RAM, CPU, DISK, pytgping),
         reply_markup=supp_markup(_),
     )

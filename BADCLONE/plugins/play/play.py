@@ -23,7 +23,6 @@ from BADCLONE.utils.inline import (
 from BADCLONE.utils.logger import play_logs
 from BADCLONE.utils.stream.stream import stream
 from config import BANNED_USERS, lyrical
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply, rich_send
 
 # ✅ Helper function for Random Image
 def get_random_img(img_list):
@@ -50,7 +49,7 @@ async def play_commnd(
     url,
     fplay,
 ):
-    mystic = await rich_reply(message, 
+    mystic = await message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
     plist_id = None
@@ -72,10 +71,10 @@ async def play_commnd(
     )
     if audio_telegram:
         if audio_telegram.file_size > 104857600:
-            return await rich_edit(mystic, _["play_5"])
+            return await mystic.edit_text(_["play_5"])
         duration_min = seconds_to_min(audio_telegram.duration)
         if (audio_telegram.duration) > config.DURATION_LIMIT:
-            return await rich_edit(mystic, 
+            return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
             )
         file_path = await Telegram.get_filepath(audio=audio_telegram)
@@ -109,7 +108,7 @@ async def play_commnd(
                 else:
                     err = _["general_2"].format(ex_type)
                     LOGGER(__name__).error(ex_type, exc_info=True)
-                return await rich_edit(mystic, err)
+                return await mystic.edit_text(err)
             return await mystic.delete()
         return
     elif video_telegram:
@@ -117,15 +116,15 @@ async def play_commnd(
             try:
                 ext = video_telegram.file_name.split(".")[-1]
                 if ext.lower() not in formats:
-                    return await rich_edit(mystic, 
+                    return await mystic.edit_text(
                         _["play_7"].format(f"{' | '.join(formats)}")
                     )
             except:
-                return await rich_edit(mystic, 
+                return await mystic.edit_text(
                     _["play_7"].format(f"{' | '.join(formats)}")
                 )
         if video_telegram.file_size > config.TG_VIDEO_FILESIZE_LIMIT:
-            return await rich_edit(mystic, _["play_8"])
+            return await mystic.edit_text(_["play_8"])
         file_path = await Telegram.get_filepath(video=video_telegram)
         if await Telegram.download(_, message, mystic, file_path):
             message_link = await Telegram.get_link(message)
@@ -157,19 +156,19 @@ async def play_commnd(
                 else:
                     err = _["general_2"].format(ex_type)
                     LOGGER(__name__).error(ex_type, exc_info=True)
-                return await rich_edit(mystic, err)
+                return await mystic.edit_text(err)
             return await mystic.delete()
         return
     elif url:
         # 🛡️ SECURITY PATCH: Block Local Files & Validate Domains
         if not url.startswith(("http://", "https://")):
-            return await rich_edit(mystic, "❌ **Security Error:** Local files are not allowed.")
+            return await mystic.edit_text("❌ **Security Error:** Local files are not allowed.")
 
         # Domain Whitelist
         allowed_domains = ["youtube.com", "youtu.be"]
         
         if not any(domain in url for domain in allowed_domains):
-             return await rich_edit(mystic, 
+             return await mystic.edit_text(
                  "❌ **Unsupported Link!**\n\n"
                  "Only YouTube links are supported."
              )
@@ -184,7 +183,7 @@ async def play_commnd(
                     )
                 except Exception as e:
                     print(e)
-                    return await rich_edit(mystic, _["play_3"])
+                    return await mystic.edit_text(_["play_3"])
                 streamtype = "playlist"
                 plist_type = "yt"
                 if "&" in url:
@@ -209,7 +208,7 @@ async def play_commnd(
                     details, track_id = await YouTube.track(url)
                 except Exception as e:
                     print(e)
-                    return await rich_edit(mystic, _["play_3"])
+                    return await mystic.edit_text(_["play_3"])
                 streamtype = "youtube"
                 img = details["thumb"]
                 cap = _["play_11"].format(
@@ -220,14 +219,14 @@ async def play_commnd(
             try:
                 await Bad.stream_call(url)
             except NoActiveGroupCall:
-                await rich_edit(mystic, _["black_9"])
-                return await rich_send(app, 
+                await mystic.edit_text(_["black_9"])
+                return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    html_text=_["play_17"],
+                    text=_["play_17"],
                 )
             except Exception as e:
-                return await rich_edit(mystic, _["general_2"].format(type(e).__name__))
-            await rich_edit(mystic, _["str_2"])
+                return await mystic.edit_text(_["general_2"].format(type(e).__name__))
+            await mystic.edit_text(_["str_2"])
             try:
                 await stream(
                     _,
@@ -248,7 +247,7 @@ async def play_commnd(
                 else:
                     err = _["general_2"].format(ex_type)
                     LOGGER(__name__).error(ex_type, exc_info=True)
-                return await rich_edit(mystic, err)
+                return await mystic.edit_text(err)
             return await play_logs(message, streamtype="M3u8 or Index Link")
     else:
         # ✅ FIX: Handle /play with no arguments (Send Random Photo + Spoiler)
@@ -269,14 +268,14 @@ async def play_commnd(
         try:
             details, track_id = await YouTube.track(query)
         except:
-            return await rich_edit(mystic, _["play_3"])
+            return await mystic.edit_text(_["play_3"])
         streamtype = "youtube"
     if str(playmode) == "Direct":
         if not plist_type:
             if details["duration_min"]:
                 duration_sec = time_to_seconds(details["duration_min"])
                 if duration_sec > config.DURATION_LIMIT:
-                    return await rich_edit(mystic, 
+                    return await mystic.edit_text(
                         _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
                     )
             else:
@@ -288,7 +287,7 @@ async def play_commnd(
                     "c" if channel else "g",
                     "f" if fplay else "d",
                 )
-                return await rich_edit(mystic, 
+                return await mystic.edit_text(
                     _["play_13"],
                     reply_markup=InlineKeyboardMarkup(buttons),
                 )
@@ -313,7 +312,7 @@ async def play_commnd(
             else:
                 err = _["general_2"].format(ex_type)
                 LOGGER(__name__).error(ex_type, exc_info=True)
-            return await rich_edit(mystic, err)
+            return await mystic.edit_text(err)
         await mystic.delete()
         return await play_logs(message, streamtype=streamtype)
     else:
@@ -405,17 +404,17 @@ async def play_music(client, CallbackQuery, _):
         await CallbackQuery.answer()
     except:
         pass
-    mystic = await rich_reply(CallbackQuery.message, 
+    mystic = await CallbackQuery.message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
     try:
         details, track_id = await YouTube.track(vidid, True)
     except:
-        return await rich_edit(mystic, _["play_3"])
+        return await mystic.edit_text(_["play_3"])
     if details["duration_min"]:
         duration_sec = time_to_seconds(details["duration_min"])
         if duration_sec > config.DURATION_LIMIT:
-            return await rich_edit(mystic, 
+            return await mystic.edit_text(
                 _["play_6"].format(config.DURATION_LIMIT_MIN, app.mention)
             )
     else:
@@ -427,7 +426,7 @@ async def play_music(client, CallbackQuery, _):
             "c" if cplay == "c" else "g",
             "f" if fplay else "d",
         )
-        return await rich_edit(mystic, 
+        return await mystic.edit_text(
             _["play_13"],
             reply_markup=InlineKeyboardMarkup(buttons),
         )
@@ -453,7 +452,7 @@ async def play_music(client, CallbackQuery, _):
         else:
             err = _["general_2"].format(ex_type)
             LOGGER(__name__).error(ex_type, exc_info=True)
-        return await rich_edit(mystic, err)
+        return await mystic.edit_text(err)
     return await mystic.delete()
 
 
@@ -496,7 +495,7 @@ async def play_playlists_command(client, CallbackQuery, _):
         await CallbackQuery.answer()
     except:
         pass
-    mystic = await rich_reply(CallbackQuery.message, 
+    mystic = await CallbackQuery.message.reply_text(
         _["play_2"].format(channel) if channel else _["play_1"]
     )
     videoid = lyrical.get(videoid)
@@ -513,7 +512,7 @@ async def play_playlists_command(client, CallbackQuery, _):
                 True,
             )
         except:
-            return await rich_edit(mystic, _["play_3"])
+            return await mystic.edit_text(_["play_3"])
     try:
         await stream(
             _,
@@ -535,7 +534,7 @@ async def play_playlists_command(client, CallbackQuery, _):
         else:
             err = _["general_2"].format(ex_type)
             LOGGER(__name__).error(ex_type, exc_info=True)
-        return await rich_edit(mystic, err)
+        return await mystic.edit_text(err)
     return await mystic.delete()
 
 

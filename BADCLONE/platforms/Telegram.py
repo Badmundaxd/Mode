@@ -15,7 +15,6 @@ from BADCLONE.utils.formatters import (
 )
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 
 def random_style():
@@ -39,7 +38,7 @@ class TeleAPI:
         for x in out:
             if j <= 2:
                 j += 1
-                await rich_reply(message, x, disable_web_page_preview=True)
+                await message.reply_text(x, disable_web_page_preview=True)
         return True
 
     async def get_link(self, message):
@@ -146,7 +145,7 @@ class TeleAPI:
                     if low < percentage <= high:
                         if high == check:
                             try:
-                                await rich_edit(mystic, 
+                                await mystic.edit_text(
                                     text=_["tg_1"].format(
                                         app.mention,
                                         total_size,
@@ -174,9 +173,9 @@ class TeleAPI:
                     )
                 except:
                     elapsed = "0 sᴇᴄᴏɴᴅs"
-                await rich_edit(mystic, _["tg_2"].format(elapsed))
+                await mystic.edit_text(_["tg_2"].format(elapsed))
             except:
-                await rich_edit(mystic, _["tg_3"])
+                await mystic.edit_text(_["tg_3"])
 
         task = asyncio.create_task(down_load())
         config.lyrical[mystic.id] = task

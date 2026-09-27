@@ -212,7 +212,7 @@ AUTO_GCAST_MSG = f"""**๏ ᴛʜɪs ɪs ᴀᴅᴠᴀɴᴄᴇᴅ ᴍᴜsɪᴄ ᴘ
 
 ➥ sᴜᴘᴘᴏʀᴛᴇᴅ ᴡᴇʟᴄᴏᴍᴇ - ʟᴇғᴛ ɴᴏᴛɪᴄᴇ, ᴛᴀɢᴀʟʟ, ᴠᴄᴛᴀɢ, ʙᴀɴ - ᴍᴜᴛᴇ, sʜᴀʏʀɪ, ʟᴜʀɪᴄs, sᴏɴɢ - ᴠɪᴅᴇᴏ ᴅᴏᴡɴʟᴏᴀᴅ, ᴇᴛᴄ... ❤️
 
-🔐ᴜsᴇ » [/start](https://t.me/OwnCloneBot?start=help) ᴛᴏ ᴄʜᴇᴄᴋ ʙᴏᴛ
+🔐ᴜꜱᴇ » [/start](https://t.me/OwnCloneBot?start=help) ᴛᴏ ᴄʜᴇᴄᴋ ʙᴏᴛ
 
 ➲ ʙᴏᴛ :** @zmnrobot
 

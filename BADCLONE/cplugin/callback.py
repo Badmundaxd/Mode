@@ -68,7 +68,6 @@ from strings import get_string
 from config import lyrical
 from BADCLONE.utils.database.clonedb import get_owner_id_from_db, get_cloned_support_chat, get_cloned_support_channel
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 
 def random_style():
@@ -261,16 +260,16 @@ async def del_back_playlist(client, CallbackQuery, _):
                 exists = confirmer[chat_id][CallbackQuery.message.id]
                 current = db[chat_id][0]
             except:
-                return await CallbackQuery.answer("ғᴀɪʟᴇᴅ.", show_alert=True)
+                return await CallbackQuery.edit_message_text(f"ғᴀɪʟᴇᴅ.")
             try:
                 if current["vidid"] != exists["vidid"]:
-                    return await CallbackQuery.answer(_["admin_35"], show_alert=True)
+                    return await CallbackQuery.edit_message.text(_["admin_35"])
                 if current["file"] != exists["file"]:
-                    return await CallbackQuery.answer(_["admin_35"], show_alert=True)
+                    return await CallbackQuery.edit_message.text(_["admin_35"])
             except:
-                return await CallbackQuery.answer(_["admin_36"], show_alert=True)
+                return await CallbackQuery.edit_message_text(_["admin_36"])
             try:
-                await CallbackQuery.answer(_["admin_37"].format(upvote), show_alert=True)
+                await CallbackQuery.edit_message_text(_["admin_37"].format(upvote))
             except:
                 pass
             command = counter
@@ -323,7 +322,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                 , style=random_style()),
             ],
         ]
-        await rich_reply(CallbackQuery.message, 
+        await CallbackQuery.message.reply_text(
             _["admin_2"].format(mention), reply_markup=InlineKeyboardMarkup(buttons)
         )
     elif command == "Resume":
@@ -349,7 +348,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             ],
         ]
 
-        await rich_reply(CallbackQuery.message, 
+        await CallbackQuery.message.reply_text(
             _["admin_4"].format(mention),
             reply_markup=InlineKeyboardMarkup(buttons_resume),
         )
@@ -357,7 +356,7 @@ async def del_back_playlist(client, CallbackQuery, _):
         await CallbackQuery.answer()
         await Bad.stop_stream(chat_id)
         await set_loop(chat_id, 0)
-        await rich_reply(CallbackQuery.message, 
+        await CallbackQuery.message.reply_text(
             _["admin_5"].format(mention), reply_markup=close_markup(_)
         )
         await CallbackQuery.message.delete()
@@ -367,18 +366,18 @@ async def del_back_playlist(client, CallbackQuery, _):
         await CallbackQuery.answer()
         await mute_on(chat_id)
         await Bad.mute_stream(chat_id)
-        await rich_reply(CallbackQuery.message, _["admin_46"].format(mention))
+        await CallbackQuery.message.reply_text(_["admin_46"].format(mention))
     elif command == "Unmute":
         if not await is_muted(chat_id):
             return await CallbackQuery.answer(_["admin_47"], show_alert=True)
         await CallbackQuery.answer()
         await mute_off(chat_id)
         await Bad.unmute_stream(chat_id)
-        await rich_reply(CallbackQuery.message, _["admin_48"].format(mention))
+        await CallbackQuery.message.reply_text(_["admin_48"].format(mention))
     elif command == "Loop":
         await CallbackQuery.answer()
         await set_loop(chat_id, 3)
-        await rich_reply(CallbackQuery.message, _["admin_41"].format(mention, 3))
+        await CallbackQuery.message.reply_text(_["admin_41"].format(mention, 3))
     elif command == "Shuffle":
         check = db.get(chat_id)
         if not check:
@@ -394,22 +393,21 @@ async def del_back_playlist(client, CallbackQuery, _):
         await CallbackQuery.answer()
         random.shuffle(check)
         check.insert(0, popped)
-        await rich_reply(CallbackQuery.message, _["admin_44"].format(mention))
+        await CallbackQuery.message.reply_text(_["admin_44"].format(mention))
     elif command == "Skip" or command == "Replay":
         check = db.get(chat_id)
         if command == "Skip":
-            txt = f"➻ sᴛʀᴇᴀᴍ sᴋɪᴘᴘᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
+            txt = f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
             popped = None
             try:
                 popped = check.pop(0)
                 if popped:
                     await auto_clean(popped)
                 if not check:
-                    try:
-                        await CallbackQuery.message.delete()
-                    except Exception:
-                        pass
-                    await rich_reply(CallbackQuery.message, 
+                    await CallbackQuery.edit_message_text(
+                        f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
+                    )
+                    await CallbackQuery.message.reply_text(
                         text=_["admin_6"].format(
                             mention, CallbackQuery.message.chat.title
                         ),
@@ -421,11 +419,10 @@ async def del_back_playlist(client, CallbackQuery, _):
                         return
             except:
                 try:
-                    try:
-                        await CallbackQuery.message.delete()
-                    except Exception:
-                        pass
-                    await rich_reply(CallbackQuery.message, 
+                    await CallbackQuery.edit_message_text(
+                        f"➻ sᴛʀᴇᴀᴍ sᴋɪᴩᴩᴇᴅ 🎄\n│ \n└ʙʏ : {mention} 🥀"
+                    )
+                    await CallbackQuery.message.reply_text(
                         text=_["admin_6"].format(
                             mention, CallbackQuery.message.chat.title
                         ),
@@ -454,7 +451,7 @@ async def del_back_playlist(client, CallbackQuery, _):
         if "live_" in queued:
             n, link = await YouTube.video(videoid, True)
             if n == 0:
-                return await rich_reply(CallbackQuery.message, 
+                return await CallbackQuery.message.reply_text(
                     text=_["admin_7"].format(title),
                     reply_markup=close_markup(_),
                 )
@@ -465,7 +462,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             try:
                 await Bad.skip_stream(chat_id, link, video=status, image=image)
             except:
-                return await rich_reply(CallbackQuery.message, _["call_6"])
+                return await CallbackQuery.message.reply_text(_["call_6"])
             button = stream_markup2(_, chat_id)
             img = await get_thumb(videoid)
             run = await CallbackQuery.message.reply_photo(
@@ -480,9 +477,9 @@ async def del_back_playlist(client, CallbackQuery, _):
             )
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
-            await rich_edit(CallbackQuery, txt, reply_markup=close_markup(_))
+            await CallbackQuery.edit_message_text(txt, reply_markup=close_markup(_))
         elif "vid_" in queued:
-            mystic = await rich_reply(CallbackQuery.message, 
+            mystic = await CallbackQuery.message.reply_text(
                 _["call_7"], disable_web_page_preview=True
             )
             try:
@@ -493,7 +490,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                     video=status,
                 )
             except:
-                return await rich_edit(mystic, _["call_6"])
+                return await mystic.edit_text(_["call_6"])
             try:
                 image = await YouTube.thumbnail(videoid, True)
             except:
@@ -501,7 +498,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             try:
                 await Bad.skip_stream(chat_id, file_path, video=status, image=image)
             except:
-                return await rich_edit(mystic, _["call_6"])
+                return await mystic.edit_text(_["call_6"])
             button = stream_markup(_, videoid, chat_id)
             img = await get_thumb(videoid)
             run = await CallbackQuery.message.reply_photo(
@@ -516,13 +513,13 @@ async def del_back_playlist(client, CallbackQuery, _):
             )
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "stream"
-            await rich_edit(CallbackQuery, txt, reply_markup=close_markup(_))
+            await CallbackQuery.edit_message_text(txt, reply_markup=close_markup(_))
             await mystic.delete()
         elif "index_" in queued:
             try:
                 await Bad.skip_stream(chat_id, videoid, video=status)
             except:
-                return await rich_reply(CallbackQuery.message, _["call_6"])
+                return await CallbackQuery.message.reply_text(_["call_6"])
             button = stream_markup2(_, chat_id)
             run = await CallbackQuery.message.reply_photo(
                 photo=STREAM_IMG_URL,
@@ -531,7 +528,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             )
             db[chat_id][0]["mystic"] = run
             db[chat_id][0]["markup"] = "tg"
-            await rich_edit(CallbackQuery, txt, reply_markup=close_markup(_))
+            await CallbackQuery.edit_message_text(txt, reply_markup=close_markup(_))
         else:
             if videoid == "telegram":
                 image = None
@@ -545,7 +542,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             try:
                 await Bad.skip_stream(chat_id, queued, video=status, image=image)
             except:
-                return await rich_reply(CallbackQuery.message, _["call_6"])
+                return await CallbackQuery.message.reply_text(_["call_6"])
             if videoid == "telegram":
                 button = stream_markup2(_, chat_id)
                 run = await CallbackQuery.message.reply_photo(
@@ -591,7 +588,7 @@ async def del_back_playlist(client, CallbackQuery, _):
                 )
                 db[chat_id][0]["mystic"] = run
                 db[chat_id][0]["markup"] = "stream"
-            await rich_edit(CallbackQuery, txt, reply_markup=close_markup(_))
+            await CallbackQuery.edit_message_text(txt, reply_markup=close_markup(_))
 
     else:
         playing = db.get(chat_id)
@@ -613,7 +610,7 @@ async def del_back_playlist(client, CallbackQuery, _):
             if (duration_played - duration_to_skip) <= 10:
                 bet = seconds_to_min(duration_played)
                 return await CallbackQuery.answer(
-                    f"» ʙᴏᴛ ɪs ᴜɴᴀʙʟᴇ ᴛᴏ sᴇᴇᴋ ʙᴇᴄᴀᴜsᴇ ᴛʜᴇ ᴅᴜʀᴀᴛɪᴏɴ ᴇxᴄᴇᴇᴅs.\n\nᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏᴇᴅ :** {bet}** ᴍɪɴᴜᴛᴇs ᴏᴜᴛ ᴏғ **{duration}** ᴍɪɴᴜᴛᴇs.",
+                    f"» ʙᴏᴛ ɪs ᴜɴᴀʙʟᴇ ᴛᴏ sᴇᴇᴋ ʙᴇᴄᴀᴜsᴇ ᴛʜᴇ ᴅᴜʀᴀᴛɪᴏɴ ᴇxᴄᴇᴇᴅs.\n\nᴄᴜʀʀᴇɴᴛʟʏ ᴩʟᴀʏᴇᴅ :** {bet}** ᴍɪɴᴜᴛᴇs ᴏᴜᴛ ᴏғ **{duration}** ᴍɪɴᴜᴛᴇs.",
                     show_alert=True,
                 )
             to_seek = duration_played - duration_to_skip + 1
@@ -621,16 +618,16 @@ async def del_back_playlist(client, CallbackQuery, _):
             if (duration_seconds - (duration_played + duration_to_skip)) <= 10:
                 bet = seconds_to_min(duration_played)
                 return await CallbackQuery.answer(
-                    f"» ʙᴏᴛ ɪs ᴜɴᴀʙʟᴇ ᴛᴏ sᴇᴇᴋ ʙᴇᴄᴀᴜsᴇ ᴛʜᴇ ᴅᴜʀᴀᴛɪᴏɴ ᴇxᴄᴇᴇᴅs.\n\nᴄᴜʀʀᴇɴᴛʟʏ ᴘʟᴀʏᴇᴅ :** {bet}** ᴍɪɴᴜᴛᴇs ᴏᴜᴛ ᴏғ **{duration}** ᴍɪɴᴜᴛᴇs.",
+                    f"» ʙᴏᴛ ɪs ᴜɴᴀʙʟᴇ ᴛᴏ sᴇᴇᴋ ʙᴇᴄᴀᴜsᴇ ᴛʜᴇ ᴅᴜʀᴀᴛɪᴏɴ ᴇxᴄᴇᴇᴅs.\n\nᴄᴜʀʀᴇɴᴛʟʏ ᴩʟᴀʏᴇᴅ :** {bet}** ᴍɪɴᴜᴛᴇs ᴏᴜᴛ ᴏғ **{duration}** ᴍɪɴᴜᴛᴇs.",
                     show_alert=True,
                 )
             to_seek = duration_played + duration_to_skip + 1
         await CallbackQuery.answer()
-        mystic = await rich_reply(CallbackQuery.message, _["admin_24"])
+        mystic = await CallbackQuery.message.reply_text(_["admin_24"])
         if "vid_" in file_path:
             n, file_path = await YouTube.video(playing[0]["vidid"], True)
             if n == 0:
-                return await rich_edit(mystic, _["admin_22"])
+                return await mystic.edit_text(_["admin_22"])
         try:
             await Bad.seek_stream(
                 chat_id,
@@ -640,13 +637,13 @@ async def del_back_playlist(client, CallbackQuery, _):
                 playing[0]["streamtype"],
             )
         except:
-            return await rich_edit(mystic, _["admin_26"])
+            return await mystic.edit_text(_["admin_26"])
         if int(command) in [1, 3]:
             db[chat_id][0]["played"] -= duration_to_skip
         else:
             db[chat_id][0]["played"] += duration_to_skip
         string = _["admin_25"].format(seconds_to_min(to_seek))
-        await rich_edit(mystic, f"{string}\n\nᴄʜᴀɴɢᴇs ᴅᴏɴᴇ ʙʏ : {mention} !")
+        await mystic.edit_text(f"{string}\n\nᴄʜᴀɴɢᴇs ᴅᴏɴᴇ ʙʏ : {mention} !")
 
 
 async def markup_timer():

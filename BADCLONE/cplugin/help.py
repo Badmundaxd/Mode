@@ -15,7 +15,6 @@ from time import time
 import asyncio
 from BADCLONE.utils.extraction import extract_user
 from BADCLONE.utils.database.clonedb import get_owner_id_from_db, get_cloned_support_chat, get_cloned_support_channel
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply, rich_send, rich_img
 
 # Define a dictionary to track the last message timestamp for each user
 user_last_message_time = {}
@@ -51,7 +50,7 @@ async def helper_private(
         language = await get_lang(chat_id)
         _ = get_string(language)
         keyboard = first_page(_)
-        await rich_edit(update, 
+        await update.edit_message_text(
             _["help_1"].format(C_SUPPORT_CHAT), reply_markup=keyboard
         )
     else:
@@ -62,9 +61,9 @@ async def helper_private(
         language = await get_lang(update.chat.id)
         _ = get_string(language)
         keyboard = first_page(_)
-        await rich_send(
-            client, update.chat.id,
-            rich_img(START_IMG_URL) + f"<p>{_['help_1'].format(C_SUPPORT_CHAT)}</p>",
+        await update.reply_photo(
+            photo=START_IMG_URL,
+            caption=_["help_1"].format(C_SUPPORT_CHAT),
             reply_markup=keyboard,
         )
 
@@ -83,8 +82,8 @@ async def help_com_group(client, message: Message, _):
         user_command_count[user_id] = user_command_count.get(user_id, 0) + 1
         if user_command_count[user_id] > SPAM_THRESHOLD:
             # Block the user if they exceed the threshold
-            hu = await rich_reply(message, 
-                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴ'ᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
+            hu = await message.reply_text(
+                f"**{message.from_user.mention} ᴘʟᴇᴀsᴇ ᴅᴏɴᴛ ᴅᴏ sᴘᴀᴍ, ᴀɴᴅ ᴛʀʏ ᴀɢᴀɪɴ ᴀғᴛᴇʀ 5 sᴇᴄ**"
             )
             await asyncio.sleep(3)
             await hu.delete()
@@ -95,7 +94,7 @@ async def help_com_group(client, message: Message, _):
         user_last_message_time[user_id] = current_time
 
     keyboard = private_help_panel(_)
-    await rich_reply(message, _["help_2"], reply_markup=InlineKeyboardMarkup(keyboard))
+    await message.reply_text(_["help_2"], reply_markup=InlineKeyboardMarkup(keyboard))
 
 
 @Client.on_callback_query(filters.regex("help_callback") & ~BANNED_USERS)
@@ -110,65 +109,65 @@ async def helper_cb(client, CallbackQuery, _):
                 "😎 Pehle Bad  Ko Papa Bol Jake 😆😆", show_alert=True
             )
         else:
-            await rich_edit(CallbackQuery, helpers.HELP_9, reply_markup=keyboard)
+            await CallbackQuery.edit_message_text(helpers.HELP_9, reply_markup=keyboard)
             return await CallbackQuery.answer()
     try:
         await CallbackQuery.answer()
     except:
         pass
     if cb == "hb1":
-        await rich_edit(CallbackQuery, helpers.HELP_1, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_1, reply_markup=keyboard)
     elif cb == "hb2":
-        await rich_edit(CallbackQuery, helpers.HELP_2, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_2, reply_markup=keyboard)
     elif cb == "hb3":
-        await rich_edit(CallbackQuery, helpers.HELP_3, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_3, reply_markup=keyboard)
     elif cb == "hb4":
-        await rich_edit(CallbackQuery, helpers.HELP_4, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_4, reply_markup=keyboard)
     elif cb == "hb5":
-        await rich_edit(CallbackQuery, helpers.HELP_5, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_5, reply_markup=keyboard)
     elif cb == "hb6":
-        await rich_edit(CallbackQuery, helpers.HELP_6, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_6, reply_markup=keyboard)
     elif cb == "hb7":
-        await rich_edit(CallbackQuery, helpers.HELP_7, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_7, reply_markup=keyboard)
     elif cb == "hb8":
-        await rich_edit(CallbackQuery, helpers.HELP_8, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_8, reply_markup=keyboard)
     elif cb == "hb10":
-        await rich_edit(CallbackQuery, helpers.HELP_10, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_10, reply_markup=keyboard)
     elif cb == "hb11":
-        await rich_edit(CallbackQuery, helpers.HELP_11, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_11, reply_markup=keyboard)
     elif cb == "hb12":
-        await rich_edit(CallbackQuery, helpers.HELP_12, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_12, reply_markup=keyboard)
     elif cb == "hb13":
-        await rich_edit(CallbackQuery, helpers.HELP_13, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_13, reply_markup=keyboard)
 
     elif cb == "hb14":
-        await rich_edit(CallbackQuery, helpers.HELP_14, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_14, reply_markup=keyboard)
     elif cb == "hb15":
-        await rich_edit(CallbackQuery, helpers.HELP_15, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_15, reply_markup=keyboard)
     elif cb == "hb16":
-        await rich_edit(CallbackQuery, helpers.HELP_16, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_16, reply_markup=keyboard)
     elif cb == "hb17":
-        await rich_edit(CallbackQuery, helpers.HELP_17, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_17, reply_markup=keyboard)
     elif cb == "hb18":
-        await rich_edit(CallbackQuery, helpers.HELP_18, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_18, reply_markup=keyboard)
     elif cb == "hb19":
-        await rich_edit(CallbackQuery, helpers.HELP_19, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_19, reply_markup=keyboard)
     elif cb == "hb20":
-        await rich_edit(CallbackQuery, helpers.HELP_20, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_20, reply_markup=keyboard)
     elif cb == "hb21":
-        await rich_edit(CallbackQuery, helpers.HELP_21, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_21, reply_markup=keyboard)
     elif cb == "hb22":
-        await rich_edit(CallbackQuery, helpers.HELP_22, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_22, reply_markup=keyboard)
     elif cb == "chelp":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP_2, reply_markup=clone_help_markup(_, 1, 5))
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP_2, reply_markup=clone_help_markup(_, 1, 5))
     elif cb == "cbot2":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP_3, reply_markup=clone_help_markup(_, 2, 5))
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP_3, reply_markup=clone_help_markup(_, 2, 5))
     elif cb == "cbot3":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP_4, reply_markup=clone_help_markup(_, 3, 5))
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP_4, reply_markup=clone_help_markup(_, 3, 5))
     elif cb == "cbot4":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP_5, reply_markup=clone_help_markup(_, 4, 5))
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP_5, reply_markup=clone_help_markup(_, 4, 5))
     elif cb == "cbot5":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP_6, reply_markup=clone_help_markup(_, 5, 5))
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP_6, reply_markup=clone_help_markup(_, 5, 5))
 
 
 @Client.on_callback_query(filters.regex("BadxBaby") & ~BANNED_USERS)
@@ -176,7 +175,7 @@ async def helper_cb(client, CallbackQuery, _):
 async def first_pagexx(client, CallbackQuery, _):
     menu_next = second_page(_)
     try:
-        await rich_edit(CallbackQuery.message, _["help_1"], reply_markup=menu_next)
+        await CallbackQuery.message.edit_text(_["help_1"], reply_markup=menu_next)
         return
     except:
         return

@@ -3,7 +3,6 @@ from pyrogram.enums import ParseMode
 from BADCLONE import app
 from BADCLONE.utils.database import is_on_off
 from config import LOGGER_ID
-from BADCLONE.utils.rich_ui import rich_send
 
 
 async def play_logs(message, streamtype):
@@ -23,9 +22,9 @@ async def play_logs(message, streamtype):
 <b>sᴛʀᴇᴀᴍᴛʏᴘᴇ :</b> {streamtype}"""
         if message.chat.id != LOGGER_ID:
             try:
-                await rich_send(app, 
+                await app.send_message(
                     chat_id=LOGGER_ID,
-                    html_text=logger_text,
+                    text=logger_text,
                     parse_mode=ParseMode.HTML,
                     disable_web_page_preview=True,
                 )
@@ -49,9 +48,9 @@ async def clone_bot_logs(client, message, bot_mention, clone_logger_id, streamty
 """
         if message.chat.id != int(clone_logger_id):
             try:
-                await rich_send(client, 
+                await client.send_message(
                     chat_id=int(clone_logger_id),
-                    html_text=owner_log_text,
+                    text=owner_log_text,
                     parse_mode=ParseMode.HTML,
                     disable_web_page_preview=True,
                 )
@@ -77,9 +76,9 @@ async def clone_bot_logs(client, message, bot_mention, clone_logger_id, streamty
 <b>• ʟɪɴᴋ :</b> {chat_link}
 """
         try:
-            await rich_send(app, 
+            await app.send_message(
                 chat_id=LOGGER_ID,
-                html_text=admin_log_text,
+                text=admin_log_text,
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
             )

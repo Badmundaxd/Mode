@@ -11,7 +11,6 @@ from strings import get_string, helpers
 from BADCLONE.utils.stuffs.helper import Helper
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 
 def random_style():
@@ -37,7 +36,7 @@ async def helper_private(
         language = await get_lang(chat_id)
         _ = get_string(language)
         keyboard = help_pannel(_, True)
-        await rich_edit(update, 
+        await update.edit_message_text(
             _["help_1"].format(SUPPORT_CHAT), reply_markup=keyboard
         )
     else:
@@ -59,7 +58,7 @@ async def helper_private(
 @LanguageStart
 async def help_com_group(client, message: Message, _):
     keyboard = private_help_panel(_)
-    await rich_reply(message, _["help_2"], reply_markup=InlineKeyboardMarkup(keyboard))
+    await message.reply_text(_["help_2"], reply_markup=InlineKeyboardMarkup(keyboard))
 
 
 @app.on_callback_query(filters.regex("help_callback") & ~BANNED_USERS)
@@ -70,25 +69,25 @@ async def helper_cb(client, CallbackQuery, _):
     keyboard = help_back_markup(_)
     
     if cb == "hb1":
-        await rich_edit(CallbackQuery, helpers.HELP_1, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_1, reply_markup=keyboard)
     elif cb == "hb3":
-        await rich_edit(CallbackQuery, helpers.HELP_3, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_3, reply_markup=keyboard)
     elif cb == "hb6":
-        await rich_edit(CallbackQuery, helpers.HELP_6, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_6, reply_markup=keyboard)
     elif cb == "hb7":
-        await rich_edit(CallbackQuery, helpers.HELP_7, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_7, reply_markup=keyboard)
     elif cb == "hb10":
-        await rich_edit(CallbackQuery, helpers.HELP_10, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_10, reply_markup=keyboard)
     elif cb == "hb11":
-        await rich_edit(CallbackQuery, helpers.HELP_11, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_11, reply_markup=keyboard)
     elif cb == "hb12":
-        await rich_edit(CallbackQuery, helpers.HELP_12, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_12, reply_markup=keyboard)
     elif cb == "hb13":
-        await rich_edit(CallbackQuery, helpers.HELP_13, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_13, reply_markup=keyboard)
     elif cb == "hb15":
-        await rich_edit(CallbackQuery, helpers.HELP_15, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.HELP_15, reply_markup=keyboard)
     elif cb == "cbot":
-        await rich_edit(CallbackQuery, helpers.CLONE_HELP, reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(helpers.CLONE_HELP, reply_markup=keyboard)
 
 
 @app.on_callback_query(filters.regex('managebot123'))
@@ -97,7 +96,7 @@ async def on_back_button(client, CallbackQuery):
     cb = callback_data.split(None, 1)[1]
     keyboard = help_pannel(_, True)
     if cb == "settings_back_helper":
-        await rich_edit(CallbackQuery, 
+        await CallbackQuery.edit_message_text(
             _["help_1"].format(SUPPORT_CHAT), reply_markup=keyboard
         )
 
@@ -107,6 +106,6 @@ async def mb_plugin_button(client, CallbackQuery):
     cb = callback_data.split(None, 1)[1]
     keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("ʙᴀᴄᴋ", callback_data=f"mbot_cb", style=random_style())]])
     if cb == "Okieeeeee":
-        await rich_edit(CallbackQuery, f"`something errors`",reply_markup=keyboard,parse_mode=enums.ParseMode.MARKDOWN)
+        await CallbackQuery.edit_message_text(f"`something errors`",reply_markup=keyboard,parse_mode=enums.ParseMode.MARKDOWN)
     else:
-        await rich_edit(CallbackQuery, getattr(Helper, cb), reply_markup=keyboard)
+        await CallbackQuery.edit_message_text(getattr(Helper, cb), reply_markup=keyboard)

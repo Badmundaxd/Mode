@@ -25,7 +25,6 @@ from BADCLONE.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply, rich_send
 
 
 def random_style():
@@ -101,13 +100,13 @@ async def start_pm(client, message: Message, _):
         if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
-                return await rich_send(app, 
+                return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    html_text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>✦ ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n<b>✦ ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
+                    text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>✦ ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n<b>✦ ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
                 )
             return
         if name[0:3] == "inf":
-            m = await rich_reply(message, "🔎")
+            m = await message.reply_text("🔎")
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
@@ -139,9 +138,9 @@ async def start_pm(client, message: Message, _):
                 reply_markup=key,
             )
             if await is_on_off(2):
-                return await rich_send(app, 
+                return await app.send_message(
                     chat_id=config.LOGGER_ID,
-                    html_text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n✦ <b>ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n✦ <b>ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
+                    text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n✦ <b>ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n✦ <b>ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
                 )
     else:
         out = private_panel(_)
@@ -153,9 +152,9 @@ async def start_pm(client, message: Message, _):
             reply_markup=InlineKeyboardMarkup(out),
         )
         if await is_on_off(2):
-            return await rich_send(app, 
+            return await app.send_message(
                 chat_id=config.LOGGER_ID,
-                html_text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n✦ <b>ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n✦ <b>ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
+                text=f"✦ {message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n✦ <b>ᴜsᴇʀ ɪᴅ ➠</b> <code>{message.from_user.id}</code>\n✦ <b>ᴜsᴇʀɴᴀᴍᴇ ➠</b> @{message.from_user.username}",
             )
 
 
@@ -186,10 +185,10 @@ async def welcome(client, message: Message):
                     pass
             if member.id == app.id:
                 if message.chat.type != ChatType.SUPERGROUP:
-                    await rich_reply(message, _["start_4"])
+                    await message.reply_text(_["start_4"])
                     return await app.leave_chat(message.chat.id)
                 if message.chat.id in await blacklisted_chats():
-                    await rich_reply(message, 
+                    await message.reply_text(
                         _["start_5"].format(
                             app.mention,
                             f"https://t.me/{app.username}?start=sudolist",
@@ -200,7 +199,7 @@ async def welcome(client, message: Message):
                     return await app.leave_chat(message.chat.id)
 
                 out = start_panel(_)
-                await rich_reply(message, 
+                await message.reply_text(
                     text=_["start_3"].format(
                         message.from_user.mention,
                         app.mention,

@@ -26,7 +26,6 @@ MONGO_DB_URI = getenv("MONGO_DB_URI", "")
 STRING_SESSION = getenv("STRING_SESSION", "")
 
 from dotenv import load_dotenv
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 rel = {}
 
@@ -48,7 +47,7 @@ async def reload_admin_cache(client, message: Message, _):
             saved = rel[message.chat.id]
             if saved > time.time():
                 left = get_readable_time((int(saved) - int(time.time())))
-                return await rich_reply(message, _["reload_1"].format(left))
+                return await message.reply_text(_["reload_1"].format(left))
         adminlist[message.chat.id] = []
         async for user in client.get_chat_members(
             message.chat.id, filter=ChatMembersFilter.ADMINISTRATORS
@@ -61,16 +60,16 @@ async def reload_admin_cache(client, message: Message, _):
             adminlist[message.chat.id].append(user_id)
         now = int(time.time()) + 180
         rel[message.chat.id] = now
-        await rich_reply(message, _["reload_2"])
+        await message.reply_text(_["reload_2"])
     except:
-        await rich_reply(message, _["reload_3"])
+        await message.reply_text(_["reload_3"])
 
 
 @Client.on_message(filters.command(["reboot"]) & filters.group & ~BANNED_USERS)
 @AdminActual
 async def restartbot(client, message: Message, _):
     i = await client.get_me()
-    mystic = await rich_reply(message, _["reload_4"].format(i.mention))
+    mystic = await message.reply_text(_["reload_4"].format(i.mention))
     await asyncio.sleep(1)
     try:
         db[message.chat.id] = []
@@ -104,7 +103,7 @@ async def restartbot(client, message: Message, _):
             await Bad.stop_stream_force(chat_id)
         except:
             pass
-    return await rich_edit(mystic, _["reload_5"].format(i.mention))
+    return await mystic.edit_text(_["reload_5"].format(i.mention))
 
 
 @Client.on_callback_query(filters.regex("close") & ~BANNED_USERS)
@@ -112,7 +111,7 @@ async def close_menu(_, query: CallbackQuery):
     try:
         await query.answer()
         await query.message.delete()
-        umm = await rich_reply(query.message, f"ᴄʟᴏsᴇ ʙʏ : {query.from_user.mention}")
+        umm = await query.message.reply_text(f"ᴄʟᴏꜱᴇ ʙʏ : {query.from_user.mention}")
         await asyncio.sleep(2)
         await umm.delete()
     except:
@@ -136,7 +135,7 @@ async def stop_download(client, CallbackQuery: CallbackQuery, _):
             except:
                 pass
             await CallbackQuery.answer(_["tg_6"], show_alert=True)
-            return await rich_edit(CallbackQuery, 
+            return await CallbackQuery.edit_message_text(
                 _["tg_7"].format(CallbackQuery.from_user.mention)
             )
         except:

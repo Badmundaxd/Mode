@@ -12,7 +12,6 @@ from BADCLONE.utils.database import (
 )
 import random
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply
 
 
 def random_style():
@@ -26,7 +25,7 @@ def random_style():
 
 @app.on_message(filters.command(["activevc", "activevoice","vc"]) & SUDOERS)
 async def activevc(_, message: Message):
-    mystic = await rich_reply(message, "» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ʟɪsᴛ...")
+    mystic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ʟɪsᴛ...")
     served_chats = await get_active_chats()
     text = ""
     j = 0
@@ -48,9 +47,9 @@ async def activevc(_, message: Message):
         except:
             continue
     if not text:
-        await rich_edit(mystic, f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
     else:
-        await rich_edit(mystic, 
+        await mystic.edit_text(
             f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs :</b>\n\n{text}",
             disable_web_page_preview=True,
         )
@@ -58,7 +57,7 @@ async def activevc(_, message: Message):
 
 @app.on_message(filters.command(["activev", "activevideo","vvc"]) & SUDOERS)
 async def activevi_(_, message: Message):
-    mystic = await rich_reply(message, "» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ʟɪsᴛ...")
+    mystic = await message.reply_text("» ɢᴇᴛᴛɪɴɢ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ʟɪsᴛ...")
     served_chats = await get_active_video_chats()
     text = ""
     j = 0
@@ -80,9 +79,9 @@ async def activevi_(_, message: Message):
         except:
             continue
     if not text:
-        await rich_edit(mystic, f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
+        await mystic.edit_text(f"» ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs ᴏɴ {app.mention}.")
     else:
-        await rich_edit(mystic, 
+        await mystic.edit_text(
             f"<b>» ʟɪsᴛ ᴏғ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ ᴠɪᴅᴇᴏ ᴄʜᴀᴛs :</b>\n\n{text}",
             disable_web_page_preview=True,
         )
@@ -91,4 +90,4 @@ async def activevi_(_, message: Message):
 async def start(client: Client, message: Message):
     ac_audio = str(len(await get_active_chats()))
     ac_video = str(len(await get_active_video_chats()))
-    await rich_reply(message, f"✫ <b><u>ᴀᴄᴛɪᴠᴇ ᴄʜᴀᴛs ɪɴғᴏ</u></b> :\n\nᴠᴏɪᴄᴇ : {ac_audio}\nᴠɪᴅᴇᴏ  : {ac_video}", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('✯ ᴄʟᴏsᴇ ✯', callback_data=f"close", style=random_style())]]))
+    await message.reply_text(f"✫ <b><u>ᴀᴄᴛɪᴠᴇ ᴄʜᴀᴛs ɪɴғᴏ</u></b> :\n\nᴠᴏɪᴄᴇ : {ac_audio}\nᴠɪᴅᴇᴏ  : {ac_video}", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('✯ ᴄʟᴏsᴇ ✯', callback_data=f"close", style=random_style())]]))

@@ -26,17 +26,6 @@ from BADCLONE.utils.database import clonebotdb
 # Extra Import for Transfer Logic
 from BADCLONE.core.mongo import mongodb
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import (
-    rich_edit,
-    rich_reply,
-    rich_send,
-    rich_img,
-    rich_esc,
-    rich_heading,
-    rich_table,
-    rich_details,
-    rich_note,
-)
 
 
 def random_style():
@@ -221,11 +210,11 @@ async def start_pm(client, message: Message, _):
     else:
         anim_frames = ["<b>ʟᴏᴀᴅɪɴɢ</b>", "<b>ʟᴏᴀᴅɪɴɢ.</b>", "<b>ʟᴏᴀᴅɪɴɢ..</b>", "<b>ʟᴏᴀᴅɪɴɢ...</b>"]
         try:
-            loading = await rich_reply(message, anim_frames[0])
+            loading = await message.reply_text(anim_frames[0])
             for frame in anim_frames[1:]:
                 await asyncio.sleep(0.3)
                 try:
-                    await rich_edit(loading, frame, parse_mode=ParseMode.HTML)
+                    await loading.edit_text(frame, parse_mode=ParseMode.HTML)
                 except:
                     pass
         except:
@@ -302,7 +291,7 @@ async def start_pm(client, message: Message, _):
         if arg.startswith("sud"):
             return await sudoers_list(client=client, message=message, _=_)
         if arg.startswith("inf"):
-            m = await rich_reply(message, "🔎")
+            m = await message.reply_text("🔎")
             q = arg.replace("info_", "", 1)
             try:
                 results = await VideosSearch(f"https://www.youtube.com/watch?v={q}", limit=1).next()
@@ -314,7 +303,7 @@ async def start_pm(client, message: Message, _):
                 return await message.reply_photo(photo=thumbnail, caption=caption, reply_markup=key, has_spoiler=True)
             except Exception as e:
                 LOG.error(e)
-                return await rich_edit(m, "❌ Error fetching info.")
+                return await m.edit_text("❌ Error fetching info.")
 
     # Custom Button Data Logic
     custom_button_data = None
@@ -341,8 +330,6 @@ async def start_pm(client, message: Message, _):
     user_mention = get_mention_html(message.from_user.id, message.from_user.first_name)
     bot_mention = get_mention_html(a.id, a.first_name)
     
-    photo = start_img if start_img else get_random_start_image()
-
     if custom_caption:
         try:
             caption = custom_caption.format(
@@ -353,44 +340,15 @@ async def start_pm(client, message: Message, _):
             )
         except:
             caption = custom_caption
-        plain_caption = caption
-        rich_body = rich_img(photo) + f"<p>{caption}</p>"
     else:
-        plain_caption = (
-            f"❍ ʜᴇʏ {user_mention} 👋\n\n"
-            f"⦿ ᴛʜɪs ɪs {bot_mention} !\n\n"
-            f"➻ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ.\n\n"
+        formatted_text = (
+            f"Hey {user_mention} 👋\n\n"
+            f"⦿ THIS IS {bot_mention} !\n\n"
+            f"➻ A FAST & POWERFUL TELEGRAM MUSIC PLAYER BOT.\n\n"
             f"──────────────────\n"
-            f"✦ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {bot_mention}"
+            f"✦ POWERED BY » {bot_mention}"
         )
-        rich_body = (
-            rich_img(photo)
-            + f"<p>❍ ʜᴇʏ {user_mention}, ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
-            + f"<p>ɪ ᴀᴍ <b>{rich_esc(a.first_name)}</b> — ᴀ ғᴀsᴛ &amp; "
-              "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ "
-              "ғᴇᴀᴛᴜʀᴇs.</p>"
-            + rich_details(
-                "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
-                rich_table(
-                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
-                    [
-                        ("🎵 sᴛʀᴇᴀᴍɪɴɢ", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ &amp; ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs"),
-                        ("🔁 ᴀᴜᴛᴏᴘʟᴀʏ", "ᴋᴇᴇᴘs ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ"),
-                        ("🎚️ ᴇғғᴇᴄᴛs", "sᴘᴇᴇᴅ ᴄᴏɴᴛʀᴏʟ &amp; ʙᴀss ʙᴏᴏsᴛ"),
-                        ("🛡️ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ", "ʙʟᴏᴄᴋ/ᴜɴʙʟᴏᴄᴋ ᴄʜᴀᴛs &amp; ᴜsᴇʀs"),
-                    ],
-                ),
-                open=True,
-            )
-            + rich_details(
-                "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧",
-                "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p>"
-                "<p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p>"
-                "<p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>",
-                open=True,
-            )
-            + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {bot_mention}")
-        )
+        caption = f"{formatted_text}"
 
     # ✅ 2. RANDOM EFFECT LOGIC [FIXED]
     if raw_effect:
@@ -405,17 +363,13 @@ async def start_pm(client, message: Message, _):
         effect = None
 
     if start_video:
-        # A video can't be embedded in a rich message (no <video> tag support),
-        # so a custom start-video keeps the native caption + spoiler blur.
         try:
-            return await message.reply_video(start_video, caption=plain_caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)
+            return await message.reply_video(start_video, caption=caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)
         except:
             pass
-
-    # True rich message — the photo is embedded via rich_img() so the card
-    # (heading, collapsible sections, real table) renders like the rest of
-    # the bot instead of being flattened into a caption.
-    await rich_send(client, message.chat.id, rich_body, reply_markup=markup)
+    
+    photo = start_img if start_img else get_random_start_image()
+    await message.reply_photo(photo, caption=caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)
 
 # =====================================================================
 # START COMMAND (GROUP)
@@ -453,7 +407,7 @@ async def start_gp(client, message: Message, _):
             pass
     
     photo = start_img if start_img else get_random_start_image()
-    await rich_send(client, message.chat.id, rich_img(photo) + f"<p>{caption}</p>", reply_markup=markup)
+    await message.reply_photo(photo, caption=caption, reply_markup=markup, has_spoiler=True)
     await add_served_chat_clone(message.chat.id, a.id)
 
 # =====================================================================
@@ -530,46 +484,9 @@ async def home_back_handler(client, CallbackQuery, _):
             caption = custom_caption.format(name=user_mention, firstname=CallbackQuery.from_user.first_name, botname=bot_mention, username=a.username)
         except:
             caption = custom_caption
-        plain_caption = caption
     else:
-        plain_caption = (
-            f"❍ ʜᴇʏ {user_mention} 👋\n\n⦿ ᴛʜɪs ɪs {bot_mention} !\n\n"
-            f"➻ ᴀ ғᴀsᴛ & ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ.\n\n"
-            f"──────────────────\n✦ ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {bot_mention}"
-        )
-
-    photo = start_img if start_img else get_random_start_image()
-
-    if custom_caption:
-        rich_body = rich_img(photo) + f"<p>{caption}</p>"
-    else:
-        rich_body = (
-            rich_img(photo)
-            + f"<p>❍ ʜᴇʏ {user_mention}, ᴡᴇʟᴄᴏᴍᴇ ᴀʙᴏᴀʀᴅ! 🎶</p>"
-            + f"<p>ɪ ᴀᴍ <b>{rich_esc(a.first_name)}</b> — ᴀ ғᴀsᴛ &amp; "
-              "ᴘᴏᴡᴇʀғᴜʟ ᴛᴇʟᴇɢʀᴀᴍ ᴍᴜsɪᴄ ᴘʟᴀʏᴇʀ ʙᴏᴛ ᴡɪᴛʜ sᴏᴍᴇ ᴀᴡᴇsᴏᴍᴇ ғᴇᴀᴛᴜʀᴇs.</p>"
-            + rich_details(
-                "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
-                rich_table(
-                    ["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"],
-                    [
-                        ("🎵 sᴛʀᴇᴀᴍɪɴɢ", "ᴘʟᴀʏ ᴀᴜᴅɪᴏ &amp; ᴠɪᴅᴇᴏ ɪɴ ᴠᴏɪᴄᴇ ᴄʜᴀᴛs"),
-                        ("🔁 ᴀᴜᴛᴏᴘʟᴀʏ", "ᴋᴇᴇᴘs ᴛʜᴇ ǫᴜᴇᴜᴇ ɢᴏɪɴɢ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ"),
-                        ("🎚️ ᴇғғᴇᴄᴛs", "sᴘᴇᴇᴅ ᴄᴏɴᴛʀᴏʟ &amp; ʙᴀss ʙᴏᴏsᴛ"),
-                        ("🛡️ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ", "ʙʟᴏᴄᴋ/ᴜɴʙʟᴏᴄᴋ ᴄʜᴀᴛs &amp; ᴜsᴇʀs"),
-                    ],
-                ),
-                open=True,
-            )
-            + rich_details(
-                "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧",
-                "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p>"
-                "<p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p>"
-                "<p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>",
-                open=True,
-            )
-            + rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {bot_mention}")
-        )
+        formatted_text = (f"Hey {user_mention} 👋\n\n⦿ THIS IS {bot_mention} !\n\n➻ A FAST & POWERFUL TELEGRAM MUSIC PLAYER BOT.\n\n──────────────────\n✦ POWERED BY » {bot_mention}")
+        caption = f"<blockquote expandable>{formatted_text}</blockquote>"
 
     # ✅ Random Effect Logic (Callback)
     if raw_effect:
@@ -583,26 +500,19 @@ async def home_back_handler(client, CallbackQuery, _):
     except:
         effect = None
 
-    if start_video:
-        # Native video can't be embedded in a rich message — keep it as a
-        # real video message with the plain caption + spoiler blur.
-        try:
-            await CallbackQuery.edit_message_media(media=InputMediaVideo(media=start_video, caption=plain_caption), reply_markup=markup)
-        except Exception:
-            try:
-                await CallbackQuery.message.delete()
-            except:
-                pass
-            await CallbackQuery.message.reply_video(start_video, caption=plain_caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)
-        return
-
-    # True rich message — same type as the screen we're coming from, so a
-    # normal edit works; only fall back to delete+resend if that fails.
     try:
-        await rich_edit(CallbackQuery, rich_body, reply_markup=markup)
-    except Exception:
+        if start_video:
+            await CallbackQuery.edit_message_media(media=InputMediaVideo(media=start_video, caption=caption), reply_markup=markup)
+        else:
+            photo = start_img if start_img else get_random_start_image()
+            await CallbackQuery.edit_message_media(media=InputMediaPhoto(media=photo, caption=caption), reply_markup=markup)
+    except Exception as e:
         try:
             await CallbackQuery.message.delete()
         except:
             pass
-        await rich_send(client, CallbackQuery.message.chat.id, rich_body, reply_markup=markup)
+        if start_video:
+            await CallbackQuery.message.reply_video(start_video, caption=caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)
+        else:
+            photo = start_img if start_img else get_random_start_image()
+            await CallbackQuery.message.reply_photo(photo, caption=caption, reply_markup=markup, has_spoiler=True, parse_mode=ParseMode.HTML)

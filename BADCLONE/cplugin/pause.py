@@ -11,7 +11,6 @@ from typing import Dict, List, Union
 from BADCLONE import userbot
 from BADCLONE.core.mongo import mongodb, pymongodb
 from pyrogram.enums import ButtonStyle
-from BADCLONE.utils.rich_ui import rich_reply
 
 
 def random_style():
@@ -103,7 +102,7 @@ async def pause_admin(cli, message: Message, _, chat_id):
         ],
     ]
 
-    await rich_reply(message, 
+    await message.reply_text(
         _["admin_2"].format(message.from_user.mention),
         reply_markup=InlineKeyboardMarkup(buttons),
     )

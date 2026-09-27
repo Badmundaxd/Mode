@@ -16,7 +16,6 @@ from BADCLONE.utils.database import (
 from BADCLONE.utils.decorators.language import language
 from BADCLONE.utils.formatters import alpha_to_int
 from config import adminlist
-from BADCLONE.utils.rich_ui import rich_edit, rich_reply, rich_send
 
 IS_BROADCASTING = False
 
@@ -30,7 +29,7 @@ async def braodcast_message(client, message, _):
         y = message.chat.id
     else:
         if len(message.command) < 2:
-            return await rich_reply(message, _["broad_2"])
+            return await message.reply_text(_["broad_2"])
         query = message.text.split(None, 1)[1]
         if "-pin" in query:
             query = query.replace("-pin", "")
@@ -43,10 +42,10 @@ async def braodcast_message(client, message, _):
         if "-user" in query:
             query = query.replace("-user", "")
         if query == "":
-            return await rich_reply(message, _["broad_8"])
+            return await message.reply_text(_["broad_8"])
 
     IS_BROADCASTING = True
-    await rich_reply(message, _["broad_1"])
+    await message.reply_text(_["broad_1"])
 
     if "-nobot" not in message.text:
         sent = 0
@@ -60,7 +59,7 @@ async def braodcast_message(client, message, _):
                 m = (
                     await app.forward_messages(i, y, x)
                     if message.reply_to_message
-                    else await rich_send(app, i, html_text=query)
+                    else await app.send_message(i, text=query)
                 )
                 if "-pin" in message.text:
                     try:
@@ -84,7 +83,7 @@ async def braodcast_message(client, message, _):
             except:
                 continue
         try:
-            await rich_reply(message, _["broad_3"].format(sent, pin))
+            await message.reply_text(_["broad_3"].format(sent, pin))
         except:
             pass
 
@@ -99,7 +98,7 @@ async def braodcast_message(client, message, _):
                 m = (
                     await app.forward_messages(i, y, x)
                     if message.reply_to_message
-                    else await rich_send(app, i, html_text=query)
+                    else await app.send_message(i, text=query)
                 )
                 susr += 1
                 await asyncio.sleep(0.2)
@@ -111,12 +110,12 @@ async def braodcast_message(client, message, _):
             except:
                 pass
         try:
-            await rich_reply(message, _["broad_4"].format(susr))
+            await message.reply_text(_["broad_4"].format(susr))
         except:
             pass
 
     if "-assistant" in message.text:
-        aw = await rich_reply(message, _["broad_5"])
+        aw = await message.reply_text(_["broad_5"])
         text = _["broad_6"]
         from BADCLONE.core.userbot import assistants
 
@@ -127,8 +126,8 @@ async def braodcast_message(client, message, _):
                 try:
                     await client.forward_messages(
                         dialog.chat.id, y, x
-                    ) if message.reply_to_message else await rich_send(client, 
-                        dialog.chat.id, html_text=query
+                    ) if message.reply_to_message else await client.send_message(
+                        dialog.chat.id, text=query
                     )
                     sent += 1
                     await asyncio.sleep(3)
@@ -141,7 +140,7 @@ async def braodcast_message(client, message, _):
                     continue
             text += _["broad_7"].format(num, sent)
         try:
-            await rich_edit(aw, text)
+            await aw.edit_text(text)
         except:
             pass
     IS_BROADCASTING = False
