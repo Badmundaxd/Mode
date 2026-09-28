@@ -26,6 +26,18 @@ from config import BANNED_USERS
 from strings import get_string
 from pyrogram.enums import ButtonStyle
 
+from BADCLONE.utils.rich_ui import (
+    rich_details,
+    rich_esc,
+    rich_heading,
+    rich_img,
+    rich_kv_table,
+    rich_note,
+    rich_send,
+    rich_table,
+    sanitize_display_name,
+)
+
 
 def random_style():
     return random.choice([
@@ -33,6 +45,74 @@ def random_style():
         ButtonStyle.DANGER,
         ButtonStyle.PRIMARY
     ])
+
+
+def _support_updates_pills() -> str:
+    support = getattr(config, "SUPPORT_CHAT", None)
+    updates = getattr(config, "SUPPORT_CHANNEL", None) or support
+    pills = ""
+    if support:
+        pills += (
+            f'<tg-button type="url" style="primary" url="{support}">'
+            "🍬 sᴜᴘᴘᴏʀᴛ</tg-button> "
+        )
+    if updates:
+        pills += (
+            f'<tg-button type="url" style="success" url="{updates}">'
+            "🍹 ᴜᴘᴅᴀᴛᴇs</tg-button>"
+        )
+    return f"<p>{pills}</p>" if pills else ""
+
+
+def _bot_name() -> str:
+    return rich_esc(getattr(app, "name", None) or getattr(config, "BOT_NAME", "Bot"))
+
+
+def _onboarding_body(_: dict, uid: int, name: str) -> str:
+    """Private /start menu (same layout as ShizuMusic)."""
+    return (
+        rich_note(
+            _["onboarding_greeting"].format(uid, rich_esc(name))
+            + _["onboarding_intro"].format(_bot_name())
+        )
+        + rich_details(
+            _["onboarding_features_heading"],
+            rich_table(_["onboarding_features_headers"], _["onboarding_features_rows"]),
+            open=True,
+        )
+        + rich_details(
+            _["onboarding_why_heading"],
+            _["onboarding_why_body"],
+            open=True,
+        )
+        + rich_note(_["onboarding_powered_by"])
+        + _support_updates_pills()
+    )
+
+
+def _help_body(_: dict, uid: int, name: str, photo: str) -> str:
+    return (
+        rich_heading(_["help_pick_category_title"], level=3)
+        + rich_img(photo)
+        + rich_note(_["help_pick_category_note"].format(uid, rich_esc(name)))
+        + rich_details(
+            _["help_features_heading"],
+            rich_table(["ғᴇᴀᴛᴜʀᴇ", "ᴅᴇᴛᴀɪʟs"], _["help_features_rows"]),
+            open=True,
+        )
+        + rich_note(_["onboarding_powered_by"])
+        + _support_updates_pills()
+    )
+
+
+def _group_body(_: dict, uid: int, name: str, chat_title: str, photo: str) -> str:
+    mention = f'<a href="tg://user?id={uid}">{rich_esc(name)}</a>'
+    return (
+        rich_img(photo)
+        + f"<p>{_['group_thanks_title'].format(mention, _bot_name())}</p>"
+        + rich_note(_["group_thanks_note"].format(rich_esc(chat_title), _bot_name()))
+        + _support_updates_pills()
+    )
 
 
 
@@ -91,10 +171,11 @@ async def start_pm(client, message: Message, _):
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
             keyboard = help_pannel(_)
-            return await message.reply_photo(
-                random.choice(YUMI_PICS),
-                has_spoiler=True,
-                caption=_["help_1"].format(config.SUPPORT_CHAT),
+            name_ = sanitize_display_name(message.from_user.first_name)
+            return await rich_send(
+                app,
+                message.chat.id,
+                _help_body(_, message.from_user.id, name_, random.choice(YUMI_PICS)),
                 reply_markup=keyboard,
             )
         if name[0:3] == "sud":
@@ -144,11 +225,12 @@ async def start_pm(client, message: Message, _):
                 )
     else:
         out = private_panel(_)
-        await message.reply_photo(
-            random.choice(YUMI_PICS),
-            has_spoiler=True,
-            caption=_["start_2"].format(message.from_user.mention, app.mention),
-            # caption=_["start_2"].format(message.from_user.mention, app.mention, UP, DISK, CPU, RAM,served_users,served_chats),
+        name_ = sanitize_display_name(message.from_user.first_name)
+        await rich_send(
+            app,
+            message.chat.id,
+            rich_img(random.choice(YUMI_PICS))
+            + _onboarding_body(_, message.from_user.id, name_),
             reply_markup=InlineKeyboardMarkup(out),
         )
         if await is_on_off(2):
@@ -163,10 +245,15 @@ async def start_pm(client, message: Message, _):
 async def start_gp(client, message: Message, _):
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
-    await message.reply_photo(
-        random.choice(YUMI_PICS),
-        has_spoiler=True,
-        caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
+    uid = message.from_user.id if message.from_user else 0
+    name_ = sanitize_display_name(message.from_user.first_name) if message.from_user else "User"
+    body = _group_body(
+        _, uid, name_, message.chat.title or "this chat", random.choice(YUMI_PICS)
+    ) + rich_note(f"❍ ᴜᴘᴛɪᴍᴇ : {rich_esc(get_readable_time(uptime))}")
+    await rich_send(
+        app,
+        message.chat.id,
+        body,
         reply_markup=InlineKeyboardMarkup(out),
     )
     return await add_served_chat(message.chat.id)
@@ -199,16 +286,30 @@ async def welcome(client, message: Message):
                     return await app.leave_chat(message.chat.id)
 
                 out = start_panel(_)
-                await message.reply_text(
-                    text=_["start_3"].format(
-                        message.from_user.mention,
-                        app.mention,
-                        message.chat.title,
-                        app.mention,
+                adder = message.from_user
+                adder_id = adder.id if adder else 0
+                adder_name = sanitize_display_name(adder.first_name) if adder else "User"
+                await rich_send(
+                    app,
+                    message.chat.id,
+                    _group_body(
+                        _, adder_id, adder_name, message.chat.title or "this chat",
+                        random.choice(YUMI_PICS),
                     ),
                     reply_markup=InlineKeyboardMarkup(out),
                 )
+                try:
+                    await rich_send(
+                        app,
+                        message.chat.id,
+                        rich_heading(_["group_admin_request_title"], level=2)
+                        + rich_note(_["group_admin_request_note1"])
+                        + rich_note(_["group_admin_request_note2"]),
+                    )
+                except Exception:
+                    pass
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+            
