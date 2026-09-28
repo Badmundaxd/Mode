@@ -77,6 +77,20 @@ FEATURES_ROWS = [
 ]
 
 
+def _why_block() -> str:
+    return rich_details(
+        "✧ ᴡʜʏ ᴄʜᴏᴏsᴇ ɪᴛ? ✧",
+        "<p>⭐ sɪᴍᴘʟᴇ sʟᴀsʜ ᴄᴏᴍᴍᴀɴᴅs, ɴᴏ sᴇᴛᴜᴘ ɴᴇᴇᴅᴇᴅ.</p>"
+        "<p>🎧 ᴄʟᴇᴀɴ, ʟᴏᴡ-ʟᴀɢ sᴛʀᴇᴀᴍɪɴɢ.</p>"
+        "<p>❍ ᴄʟɪᴄᴋ ʜᴇʟᴘ ʙᴇʟᴏᴡ ғᴏʀ ᴀʟʟ ᴄᴏᴍᴍᴀɴᴅs.</p>",
+        open=True,
+    )
+
+
+def _powered_by() -> str:
+    return rich_note(f"ᴘᴏᴡᴇʀᴇᴅ ʙʏ » {app.mention}")
+
+
 def _features_block() -> str:
     return rich_details(
         "✦ ᴋᴇʏ ғᴇᴀᴛᴜʀᴇs ✦",
@@ -200,6 +214,8 @@ async def start_pm(client, message: Message, _):
             rich_img(random.choice(YUMI_PICS))
             + _rich_text(_["start_2"].format(message.from_user.mention, app.mention))
             + _features_block()
+            + _why_block()
+            + _powered_by()
             + _support_updates_pills(),
             reply_markup=InlineKeyboardMarkup(out),
         )
