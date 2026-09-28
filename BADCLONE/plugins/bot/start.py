@@ -66,7 +66,9 @@ def _support_updates_pills() -> str:
 
 def _rich_text(text: str) -> str:
     """Existing en.yml strings (start_1 / start_2 / start_3) -> rich note."""
-    return rich_note(text.replace("\n", "<br>"))
+    paras = [p for p in text.split("\n\n") if p.strip()]
+    body = "".join(f"<p>{p.strip().replace(chr(10), '<br>')}</p>" for p in paras)
+    return rich_note(body)
 
 
 FEATURES_ROWS = [
